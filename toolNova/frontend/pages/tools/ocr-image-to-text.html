@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Image to Text | ToolNova</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <style>
+        .tool-container { max-width: 800px; margin: 50px auto; padding: 30px; background: white; border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .upload-box { border: 2px dashed var(--border-color); padding: 40px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 20px; }
+        .result-area { margin-top: 30px; text-align: left; }
+        .text-output { width: 100%; height: 300px; padding: 15px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; background: #fcfcfc; }
+        .loading-spinner { display: none; margin: 20px auto; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-container">
+            <a href="../../index.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;">← <span data-i18n="nav_home">Home</span></a>
+            <h1 data-i18n="tool_ocr_name">OCR Image to Text</h1>
+            <p>Extract real text from images using AI-powered OCR.</p>
+
+            <div class="upload-box" id="dropZone">
+                <p data-i18n="tool_upload_label">Choose Image with Text</p>
+                <input type="file" id="fileInput" accept="image/*" style="display:none">
+            </div>
+
+            <button class="btn btn-primary" id="processBtn" data-i18n="tool_process_btn">Extract Text</button>
+
+            <div class="loading-spinner" id="spinner"></div>
+
+            <div class="result-area" id="resultArea" style="display:none">
+                <h3>Extracted Text:</h3>
+                <textarea class="text-output" id="textOutput" readonly></textarea>
+                <button class="btn btn-success" id="copyBtn" style="margin-top:10px">Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+    <script src="../../js/i18n.js"></script>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const processBtn = document.getElementById('processBtn');
+        const spinner = document.getElementById('spinner');
+        const resultArea = document.getElementById('resultArea');
+        const textOutput = document.getElementById('textOutput');
+        const copyBtn = document.getElementById('copyBtn');
+
+        let selectedFile = null;
+
+        dropZone.onclick = () => fileInput.click();
+        fileInput.onchange = (e) => { selectedFile = e.target.files[0]; if(selectedFile) alert('Selected: ' + selectedFile.name); };
+
+        processBtn.onclick = async () => {
+            if(!selectedFile) return alert('Please select an image');
+
+            processBtn.style.display = 'none';
+            spinner.style.display = 'block';
+            resultArea.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('http://localhost:8000/api/text/ocr', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if(data.text) {
+                    textOutput.value = data.text;
+                    resultArea.style.display = 'block';
+                } else {
+                    alert('OCR failed to extract text');
+                }
+            } catch (e) {
+                alert('Backend not running. Please start the Python server.');
+            } finally {
+                spinner.style.display = 'none';
+                processBtn.style.display = 'inline-block';
+            }
+        };
+
+        copyBtn.onclick = () => {
+            textOutput.select();
+            document.execCommand('copy');
+            alert('Text copied!');
+        };
+    </script>
+</body>
+</html>

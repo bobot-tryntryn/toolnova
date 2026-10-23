@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Rewriter | ToolNova</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <style>
+        .tool-container { max-width: 700px; margin: 50px auto; padding: 30px; background: white; border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .input-area { text-align: left; margin: 20px 0; }
+        textarea { width: 100%; height: 150px; padding: 15px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; margin-bottom: 15px; }
+        .options { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        .result-area { text-align: left; margin-top: 30px; display: none; }
+        .result-text { background: #f8fafc; padding: 15px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); min-height: 100px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-container">
+            <a href="../../index.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;">← <span data-i18n="nav_home">Home</span></a>
+            <h1 data-i18n="tool_text_rewrite">AI Text Rewriter</h1>
+            <p>Rewrite your text in different styles instantly.</p>
+
+            <div class="input-area">
+                <label>Your text:</label>
+                <textarea id="textInput" placeholder="Paste your text here..."></textarea>
+            </div>
+
+            <div class="options">
+                <select id="styleSelect" class="lang-selector">
+                    <option value="professional">Professional</option>
+                    <option value="simple">Simple</option>
+                    <option value="concise">Concise</option>
+                </select>
+                <button class="btn btn-primary" id="processBtn" data-i18n="tool_process_btn">Rewrite Text</button>
+            </div>
+
+            <div class="result-area" id="resultArea">
+                <h3>Rewritten Result:</h3>
+                <div class="result-text" id="resultText"></div>
+                <button class="btn btn-success" id="copyBtn" style="margin-top:10px">Copy Result</button>
+            </div>
+        </div>
+    </div>
+    <script src="../../js/i18n.js"></script>
+    <script>
+        const textInput = document.getElementById('textInput');
+        const styleSelect = document.getElementById('styleSelect');
+        const processBtn = document.getElementById('processBtn');
+        const resultArea = document.getElementById('resultArea');
+        const resultText = document.getElementById('resultText');
+        const copyBtn = document.getElementById('copyBtn');
+
+        processBtn.onclick = async () => {
+            const text = textInput.value.trim();
+            if(!text) return alert('Please enter some text');
+
+            processBtn.innerText = 'Processing...';
+            processBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('text', text);
+            formData.append('style', styleSelect.value);
+
+            try {
+                const response = await fetch('http://localhost:8000/api/text/rewrite', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                resultText.innerText = data.rewritten_text;
+                resultArea.style.display = 'block';
+            } catch (e) {
+                alert('Backend error. Make sure server is running.');
+            } finally {
+                processBtn.innerText = 'Rewrite Text';
+                processBtn.disabled = false;
+            }
+        };
+
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(resultText.innerText);
+            alert('Copied!');
+        };
+    </script>
+</body>
+</html>

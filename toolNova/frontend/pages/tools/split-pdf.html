@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split PDF | ToolNova</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <style>
+        .tool-container { max-width: 600px; margin: 50px auto; padding: 30px; background: white; border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .upload-box { border: 2px dashed var(--border-color); padding: 40px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 20px; }
+        .options { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; }
+        .opt-field { display: flex; flex-direction: column; text-align: left; }
+        .opt-field label { font-size: 0.9rem; margin-bottom: 5px; }
+        .opt-field input { padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); }
+        .loading-spinner { display: none; margin: 20px auto; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-container">
+            <a href="../../index.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;">← <span data-i18n="nav_home">Home</span></a>
+            <h1 data-i18n="tool_split_pdf">Split PDF</h1>
+            <p>Extract specific pages from your PDF document.</p>
+
+            <div class="upload-box" id="dropZone">
+                <p data-i18n="tool_upload_label">Choose PDF file</p>
+                <input type="file" id="fileInput" accept="application/pdf" style="display:none">
+            </div>
+
+            <div class="options">
+                <div class="opt-field">
+                    <label>Start Page</label>
+                    <input type="number" id="startPage" value="1">
+                </div>
+                <div class="opt-field">
+                    <label>End Page</label>
+                    <input type="number" id="endPage" value="1">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="processBtn" data-i18n="tool_process_btn">Split PDF</button>
+
+            <div class="loading-spinner" id="spinner"></div>
+            <a id="downloadLink" class="btn btn-success" style="display:none; margin-top:20px; text-decoration:none" data-i18n="tool_download_btn">Download Split PDF</a>
+        </div>
+    </div>
+    <script src="../../js/i18n.js"></script>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const startPage = document.getElementById('startPage');
+        const endPage = document.getElementById('endPage');
+        const processBtn = document.getElementById('processBtn');
+        const spinner = document.getElementById('spinner');
+        const downloadLink = document.getElementById('downloadLink');
+
+        let selectedFile = null;
+
+        dropZone.onclick = () => fileInput.click();
+        fileInput.onchange = (e) => { selectedFile = e.target.files[0]; if(selectedFile) alert('Selected: ' + selectedFile.name); };
+
+        processBtn.onclick = async () => {
+            if(!selectedFile) return alert('Please select a PDF file');
+
+            processBtn.style.display = 'none';
+            spinner.style.display = 'block';
+            downloadLink.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('start_page', startPage.value);
+            formData.append('end_page', endPage.value);
+
+            try {
+                const response = await fetch('http://localhost:8000/api/pdf/split', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if(data.download_url) {
+                    downloadLink.href = 'http://localhost:8000' + data.download_url;
+                    downloadLink.style.display = 'inline-block';
+                } else {
+                    alert('Error splitting PDF');
+                }
+            } catch (e) {
+                alert('Backend not running. Please start the Python server.');
+            } finally {
+                spinner.style.display = 'none';
+                processBtn.style.display = 'inline-block';
+            }
+        };
+    </script>
+</body>
+</html>

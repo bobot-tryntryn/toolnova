@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About ToolNova | Professional All-in-One Utility</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        .about-hero {
+            padding: 120px 0 60px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+        .about-hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 20px; }
+        .about-content { padding: 80px 0; max-width: 800px; margin: 0 auto; line-height: 1.8; color: var(--text-muted); }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 60px; }
+        .feature-card { padding: 30px; background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); transition: 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--primary-color); }
+        .feature-card h3 { color: var(--primary-color); margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="logo" style="text-decoration: none;">ToolNova</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#toolGrid">Tools</a></li>
+                <li><a href="about.html" style="color: var(--primary-color);">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="about-hero">
+        <div class="container">
+            <h1>Empowering Your Digital Workflow</h1>
+            <p>The most comprehensive suite of free online tools for images, PDFs, and text.</p>
+        </div>
+    </header>
+
+    <main class="container about-content">
+        <section>
+            <h2>What is ToolNova?</h2>
+            <p>ToolNova is born from a simple idea: why use ten different websites when you can have everything in one place? We provide a high-performance, secure, and free environment to handle your most common digital tasks.</p>
+        </section>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>⚡ Fast & Secure</h3>
+                <p>We process files locally whenever possible to ensure your data remains yours.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🌍 Multilingual</h3>
+                <p>Designed for a global audience with full support for English, French, and Arabic.</p>
+            </div>
+            <div class="feature-card">
+                <h3>💎 Premium Quality</h3>
+                <p>Professional results for images and documents without the subscription fee.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+        <p>© 2024 ToolNova. All rights reserved.</p>
+    </footer>
+</body>
+</html>

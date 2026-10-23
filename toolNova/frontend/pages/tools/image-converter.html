@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter | ToolNova</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <style>
+        .tool-container { max-width: 700px; margin: 50px auto; padding: 30px; background: white; border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .upload-box { border: 2px dashed var(--border-color); padding: 40px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 20px; }
+        .options { margin: 20px 0; display: flex; justify-content: center; gap: 15px; align-items: center; }
+        select { padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); }
+        .preview-container { display: none; margin-top: 30px; justify-content: center; }
+        .preview-item img { max-width: 300px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-container">
+            <a href="../../index.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;">← <span data-i18n="nav_home">Home</span></a>
+            <h1 data-i18n="tool_convert_name">Image Converter</h1>
+            <p data-i18n="tool_convert_desc">Convert images between JPG, PNG and WEBP.</p>
+
+            <div class="upload-box" id="dropZone">
+                <p data-i18n="tool_upload_label">Choose Image</p>
+                <input type="file" id="fileInput" accept="image/*" style="display:none">
+            </div>
+
+            <div class="options">
+                <label>Convert to:</label>
+                <select id="formatSelect">
+                    <option value="image/jpeg">JPG</option>
+                    <option value="image/png">PNG</option>
+                    <option value="image/webp">WEBP</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" id="convertBtn" data-i18n="tool_process_btn">Convert Now</button>
+
+            <div class="preview-container" id="previewContainer">
+                <div class="preview-item">
+                    <img id="resImg">
+                </div>
+            </div>
+            <button class="btn btn-success" id="downloadBtn" style="display:none; margin-top:20px" data-i18n="tool_download_btn">Download</button>
+        </div>
+    </div>
+    <script src="../../js/i18n.js"></script>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const formatSelect = document.getElementById('formatSelect');
+        const convertBtn = document.getElementById('convertBtn');
+        const previewContainer = document.getElementById('previewContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let originalFile = null;
+
+        dropZone.onclick = () => fileInput.click();
+        fileInput.onchange = (e) => { originalFile = e.target.files[0]; if(originalFile) alert('Selected: ' + originalFile.name); };
+
+        convertBtn.onclick = () => {
+            if(!originalFile) return alert('Please select an image');
+            const reader = new FileReader();
+            reader.readAsDataURL(originalFile);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+
+                    const convertedData = canvas.toDataURL(formatSelect.value);
+
+                    document.getElementById('resImg').src = convertedData;
+                    previewContainer.style.display = 'flex';
+                    downloadBtn.style.display = 'inline-block';
+
+                    downloadBtn.onclick = () => {
+                        const link = document.createElement('a');
+                        link.download = 'converted-toolnova.' + formatSelect.value.split('/')[1];
+                        link.href = convertedData;
+                        link.click();
+                    };
+                };
+            };
+        };
+    </script>
+</body>
+</html>

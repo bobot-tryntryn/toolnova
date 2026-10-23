@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator | ToolNova</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        .tool-container { max-width: 600px; margin: 50px auto; padding: 20px; background: white; border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .input-group { margin: 20px 0; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 1rem; }
+        #qrcode { margin: 30px auto; display: flex; justify-content: center; }
+        .result-area { display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-container">
+            <a href="../../index.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;">← <span data-i18n="nav_home">Home</span></a>
+            <h1 data-i18n="tool_qr_name">QR Code Generator</h1>
+            <p data-i18n="tool_qr_desc">Create QR codes instantly for your links and text.</p>
+
+            <div class="input-group">
+                <label data-i18n="insert_text">Text or URL</label>
+                <input type="text" id="qrInput" placeholder="https://toolnova.com">
+            </div>
+
+            <button class="btn btn-primary" id="generateBtn" data-i18n="tool_process_btn">Generate</button>
+
+            <div class="result-area" id="resultArea">
+                <div id="qrcode"></div>
+                <button class="btn btn-success" id="downloadBtn" data-i18n="tool_download_btn">Download PNG</button>
+            </div>
+        </div>
+    </div>
+    <script src="../../js/i18n.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('qrInput');
+            const btn = document.getElementById('generateBtn');
+            const resultArea = document.getElementById('resultArea');
+            const qrDiv = document.getElementById('qrcode');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            let qrcode = new QRCode(qrDiv, { width: 256, height: 256 });
+
+            btn.onclick = () => {
+                const text = input.value.trim();
+                if(!text) return alert('Please enter text');
+                qrcode.makeCode(text);
+                resultArea.style.display = 'block';
+            };
+
+            downloadBtn.onclick = () => {
+                const img = qrDiv.querySelector('img');
+                const link = document.createElement('a');
+                link.download = 'toolnova-qrcode.png';
+                link.href = img.src;
+                link.click();
+            };
+        });
+    </script>
+</body>
+</html>

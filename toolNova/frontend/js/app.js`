@@ -1,0 +1,78 @@
+const toolIcons = {
+    'qr-gen': 'qr-code',
+    'img-comp': 'minimize',
+    'img-conv': 'refresh-cw',
+    'img-resiz': 'maximize',
+    'img-bg': 'image',
+    'pdf-merge': 'files',
+    'pdf-split': 'scissors',
+    'ocr-text': 'scan-text',
+    'text-rew': 'pen-tool',
+    'vid-comp': 'film',
+    'vid-aud': 'music',
+    'aud-conv': 'volume-2'
+};
+
+const tools = [
+    { id: 'qr-gen', name: 'tool_qr_name', desc: 'tool_qr_desc', cat: 'text', link: 'pages/tools/qr-generator.html' },
+    { id: 'img-comp', name: 'tool_compress_name', desc: 'tool_compress_desc', cat: 'image', link: 'pages/tools/image-compressor.html' },
+    { id: 'img-conv', name: 'tool_convert_name', desc: 'tool_convert_desc', cat: 'image', link: 'pages/tools/image-converter.html' },
+    { id: 'img-resiz', name: 'tool_resize_name', desc: 'tool_resize_desc', cat: 'image', link: 'pages/tools/image-resizer.html' },
+    { id: 'img-bg', name: 'tool_bg_remove', desc: 'Remove image background using AI.', cat: 'image', link: 'pages/tools/remove-background.html' },
+    { id: 'pdf-merge', name: 'tool_merge_pdf', desc: 'Merge multiple PDF files into one professional document.', cat: 'pdf', link: 'pages/tools/merge-pdf.html' },
+    { id: 'pdf-split', name: 'tool_split_pdf', desc: 'Extract specific pages from your PDF document.', cat: 'pdf', link: 'pages/tools/split-pdf.html' },
+    { id: 'ocr-text', name: 'tool_ocr_name', desc: 'Extract real text from images using AI-powered OCR.', cat: 'pdf', link: 'pages/tools/ocr-image-to-text.html' },
+    { id: 'text-rew', name: 'tool_text_rewrite', desc: 'Rewrite your text in different styles instantly.', cat: 'text', link: 'pages/tools/text-rewriter.html' },
+    { id: 'vid-comp', name: 'tool_video_compress', desc: 'Reduce video file size while keeping great quality.', cat: 'media', link: 'pages/tools/video-compressor.html' },
+    { id: 'vid-aud', name: 'tool_extract_audio', desc: 'Convert your video files into high-quality MP3 audio tracks.', cat: 'media', link: 'pages/tools/extract-audio.html' },
+    { id: 'aud-conv', name: 'tool_audio_convert', desc: 'Convert audio files between MP3, WAV, and other formats.', cat: 'media', link: 'pages/tools/audio-converter.html' }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.getElementById('toolGrid');
+    const searchInput = document.getElementById('toolSearch');
+    const filters = document.querySelectorAll('.filter-btn');
+
+    function renderTools(filter = 'all', search = '') {
+        grid.innerHTML = '';
+        const filtered = tools.filter(t =>
+            (filter === 'all' || t.cat === filter) &&
+            (t.name.toLowerCase().includes(search.toLowerCase()) || t.desc.toLowerCase().includes(search.toLowerCase()))
+        );
+
+        filtered.forEach(t => {
+            const iconName = toolIcons[t.id] || 'tool';
+            const card = document.createElement('div');
+            card.className = 'tool-card';
+            card.innerHTML = `
+                <div class="tool-icon-wrapper">
+                    <i data-lucide="${iconName}"></i>
+                </div>
+                <h3 data-i18n="${t.name}">${t.name}</h3>
+                <p data-i18n="${t.desc}">${t.desc}</p>
+                <a href="${t.link}" class="btn btn-small">Open Tool</a>
+            `;
+            grid.appendChild(card);
+        });
+
+        if (typeof window.updateTranslations === 'function') {
+            window.updateTranslations();
+        }
+
+        // Re-initialize Lucide icons after injecting HTML
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+
+    searchInput.oninput = (e) => renderTools(document.querySelector('.filter-btn.active').dataset.cat, e.target.value);
+    filters.forEach(btn => {
+        btn.onclick = () => {
+            filters.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderTools(btn.dataset.cat, searchInput.value);
+        };
+    });
+
+    renderTools();
+});

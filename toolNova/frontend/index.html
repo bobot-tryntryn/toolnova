@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolNova | Luxury Utility Suite</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/rtl.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            color: white;
+            background: #0f172a;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
+                linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 100;
+            background: rgba(15, 23, 42, 0.7);
+        }
+        .nav-links { display: flex; gap: 30px; list-style: none; align-items: center; }
+        .nav-links a { text-decoration: none; color: #cbd5e1; font-weight: 500; transition: 0.3s; font-size: 0.95rem; }
+        .nav-links a:hover { color: white; }
+        .logo { font-size: 1.8rem; font-weight: 800; color: white; letter-spacing: -1px; }
+
+        .lang-selector {
+            padding: 6px 12px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1);
+            color: white; cursor: pointer; font-size: 0.85rem; outline: none;
+        }
+        .lang-selector option { color: black; }
+
+        .hero {
+            padding: 120px 0 80px; text-align: center;
+        }
+        .hero h1 {
+            font-size: 4rem; font-weight: 800; max-width: 900px; margin: 0 auto 20px;
+            line-height: 1.1; letter-spacing: -2px; color: white;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .hero p { font-size: 1.4rem; color: #cbd5e1; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto; }
+
+        .tool-section { padding: 60px 0; }
+        .section-title { text-align: center; margin-bottom: 60px; }
+        .section-title h2 { font-size: 3rem; font-weight: 700; color: white; letter-spacing: -1px; }
+
+        .filter-bar {
+            display: flex; justify-content: center; gap: 15px;
+            margin-bottom: 40px; flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 12px 28px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05); cursor: pointer; font-weight: 500; transition: all 0.3s ease;
+            color: #cbd5e1; font-size: 0.95rem; backdrop-filter: blur(5px);
+        }
+        .filter-btn:hover { background: rgba(255,255,255,0.15); color: white; border-color: white; transform: translateY(-2px); }
+        .filter-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4); }
+
+        .search-container {
+            max-width: 650px; margin: 0 auto 50px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%; padding: 20px 30px; border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1);
+            font-size: 1.1rem; outline: none; color: white; transition: 0.3s;
+            backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .search-input::placeholder { color: #94a3b8; }
+        .search-input:focus { border-color: var(--primary-color); background: rgba(255,255,255,0.15); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2); }
+
+        .tool-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .ad-slot {
+            background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 24px; display: flex;
+            align-items: center; justify-content: center;
+            color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;
+            letter-spacing: 2px; margin: 50px 0;
+            backdrop-filter: blur(10px); transition: 0.3s;
+        }
+        .ad-banner { width: 100%; height: 120px; margin-bottom: 60px; }
+        .ad-slot:hover { background: rgba(255,255,255,0.1); border-color: white; }
+
+        footer {
+            padding: 80px 0; border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center; color: #94a3b8; font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo">ToolNova</div>
+            <ul class="nav-links">
+                <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+                <li><a href="#toolGrid" data-i18n="nav_tools">Tools</a></li>
+                <li><a href="about.html" data-i18n="nav_about">About</a></li>
+                <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+                <li>
+                    <select class="lang-selector" id="langSwitch">
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                        <option value="ar">العربية</option>
+                    </select>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="ad-slot ad-banner">Premium Ad Space</div>
+
+        <section class="hero">
+            <h1 data-i18n="hero_title">All Your Essential Online Tools in One Place</h1>
+            <p data-i18n="hero_desc">Professional, secure, and free tools for images, PDFs and text. No registration required.</p>
+            <button class="btn btn-primary" data-i18n="hero_cta" onclick="document.getElementById('toolGrid').scrollIntoView({behavior: 'smooth'})">Explore Tools</button>
+        </section>
+
+        <section class="tool-section">
+            <div class="section-title">
+                <h2 data-i18n="category_all">All Tools</h2>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="toolSearch" class="search-input" data-i18n-placeholder="search_placeholder">
+            </div>
+
+            <div class="filter-bar" id="categoryFilters">
+                <button class="filter-btn active" data-cat="all" data-i18n="category_all">All Tools</button>
+                <button class="filter-btn" data-cat="image" data-i18n="category_image">Images</button>
+                <button class="filter-btn" data-cat="pdf" data-i18n="category_pdf">PDFs</button>
+                <button class="filter-btn" data-cat="text" data-i18n="category_text">Text & AI</button>
+                <button class="filter-btn" data-cat="media" data-i18n="category_media">Media</button>
+            </div>
+
+            <div class="tool-grid" id="toolGrid"></div>
+        </section>
+
+        <div class="ad-slot ad-banner">Premium Ad Space</div>
+
+        <footer>
+            <p data-i18n="footer_text">© 2024 ToolNova. Your everyday tools, all in one place.</p>
+        </footer>
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

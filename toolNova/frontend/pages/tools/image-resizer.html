@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer | ToolNova</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <style>
+        .tool-container { max-width: 700px; margin: 50px auto; padding: 30px; background: white; border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .upload-box { border: 2px dashed var(--border-color); padding: 40px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 20px; }
+        .options { margin: 20px 0; display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap; }
+        .opt-field { display: flex; flex-direction: column; align-items: flex-start; }
+        .opt-field label { font-size: 0.9rem; margin-bottom: 5px; }
+        .opt-field input { padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); }
+        .preview-container { display: none; margin-top: 30px; justify-content: center; }
+        .preview-item img { max-width: 300px; border: 1px solid var(--border-color); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-container">
+            <a href="../../index.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;">← <span data-i18n="nav_home">Home</span></a>
+            <h1 data-i18n="tool_resize_name">Image Resizer</h1>
+            <p data-i18n="tool_resize_desc">Change image dimensions precisely.</p>
+
+            <div class="upload-box" id="dropZone">
+                <p data-i18n="tool_upload_label">Choose Image</p>
+                <input type="file" id="fileInput" accept="image/*" style="display:none">
+            </div>
+
+            <div class="options">
+                <div class="opt-field">
+                    <label>Width (px)</label>
+                    <input type="number" id="widthInput" placeholder="Width">
+                </div>
+                <div class="opt-field">
+                    <label>Height (px)</label>
+                    <input type="number" id="heightInput" placeholder="Height">
+                </div>
+                <div class="opt-field" style="justify-content: center; flex-direction: row; gap: 10px; align-items: center;">
+                    <input type="checkbox" id="aspectRatio" checked>
+                    <label for="aspectRatio">Keep Aspect Ratio</label>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="resizeBtn" data-i18n="tool_process_btn">Resize Image</button>
+
+            <div class="preview-container" id="previewContainer">
+                <div class="preview-item">
+                    <img id="resImg">
+                </div>
+            </div>
+            <button class="btn btn-success" id="downloadBtn" style="display:none; margin-top:20px" data-i18n="tool_download_btn">Download</button>
+        </div>
+    </div>
+    <script src="../../js/i18n.js"></script>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const aspectRatio = document.getElementById('aspectRatio');
+        const resizeBtn = document.getElementById('resizeBtn');
+        const previewContainer = document.getElementById('previewContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let originalFile = null;
+
+        dropZone.onclick = () => fileInput.click();
+        fileInput.onchange = (e) => { originalFile = e.target.files[0]; if(originalFile) alert('Selected: ' + originalFile.name); };
+
+        resizeBtn.onclick = () => {
+            if(!originalFile) return alert('Please select an image');
+            const reader = new FileReader();
+            reader.readAsDataURL(originalFile);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    let w = parseInt(widthInput.value);
+                    let h = parseInt(heightInput.value);
+
+                    if(aspectRatio.checked) {
+                        if(w && !h) h = Math.round(img.height * (w / img.width));
+                        else if(h && !w) w = Math.round(img.width * (h / img.height));
+                        else if(!w && !h) { w = img.width; h = img.height; }
+                    } else {
+                        if(!w) w = img.width;
+                        if(!h) h = img.height;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    const resizedData = canvas.toDataURL('image/png');
+
+                    document.getElementById('resImg').src = resizedData;
+                    previewContainer.style.display = 'flex';
+                    downloadBtn.style.display = 'inline-block';
+
+                    downloadBtn.onclick = () => {
+                        const link = document.createElement('a');
+                        link.download = 'resized-toolnova.png';
+                        link.href = resizedData;
+                        link.click();
+                    };
+                };
+            };
+        };
+    </script>
+</body>
+</html>

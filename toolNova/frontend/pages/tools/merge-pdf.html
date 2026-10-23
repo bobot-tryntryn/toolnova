@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF | ToolNova</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <style>
+        .tool-container { max-width: 700px; margin: 50px auto; padding: 30px; background: white; border-radius: var(--radius-md); box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .upload-box { border: 2px dashed var(--border-color); padding: 40px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
+        .upload-box:hover { border-color: var(--primary-color); background: #f0f7ff; }
+        .file-list { text-align: left; margin: 20px 0; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .file-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        .remove-btn { color: var(--error-color); cursor: pointer; font-weight: bold; }
+        .loading-spinner { display: none; margin: 20px auto; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tool-container">
+            <a href="../../index.html" style="text-decoration: none; color: var(--primary-color); font-weight: 600;">← <span data-i18n="nav_home">Home</span></a>
+            <h1 data-i18n="tool_merge_pdf">Merge PDF</h1>
+            <p>Combine multiple PDF files into one professional document.</p>
+
+            <div class="upload-box" id="dropZone">
+                <p data-i18n="tool_upload_label">Click or Drag & Drop PDF files</p>
+                <input type="file" id="fileInput" accept="application/pdf" multiple style="display:none">
+            </div>
+
+            <div class="file-list" id="fileList"></div>
+
+            <button class="btn btn-primary" id="processBtn" data-i18n="tool_process_btn">Merge PDFs</button>
+
+            <div class="loading-spinner" id="spinner"></div>
+            <a id="downloadLink" class="btn btn-success" style="display:none; margin-top:20px; text-decoration:none" data-i18n="tool_download_btn">Download Merged PDF</a>
+        </div>
+    </div>
+    <script src="../../js/i18n.js"></script>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const fileListDiv = document.getElementById('fileList');
+        const processBtn = document.getElementById('processBtn');
+        const spinner = document.getElementById('spinner');
+        const downloadLink = document.getElementById('downloadLink');
+
+        let selectedFiles = [];
+
+        dropZone.onclick = () => fileInput.click();
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        function handleFiles(files) {
+            for(let file of files) {
+                if(file.type === 'application/pdf') {
+                    selectedFiles.push(file);
+                }
+            }
+            updateList();
+        }
+
+        function updateList() {
+            fileListDiv.innerHTML = '';
+            selectedFiles.forEach((f, i) => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `<span>${f.name}</span><span class="remove-btn" onclick="removeFile(${i})">✕</span>`;
+                fileListDiv.appendChild(item);
+            });
+        }
+
+        window.removeFile = (i) => {
+            selectedFiles.splice(i, 1);
+            updateList();
+        };
+
+        processBtn.onclick = async () => {
+            if(selectedFiles.length < 2) return alert('Please select at least 2 PDF files');
+
+            processBtn.style.display = 'none';
+            spinner.style.display = 'block';
+            downloadLink.style.display = 'none';
+
+            const formData = new FormData();
+            selectedFiles.forEach(file => formData.append('files', file));
+
+            try {
+                const response = await fetch('http://localhost:8000/api/pdf/merge', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if(data.download_url) {
+                    downloadLink.href = 'http://localhost:8000' + data.download_url;
+                    downloadLink.style.display = 'inline-block';
+                } else {
+                    alert('Error processing PDF');
+                }
+            } catch (e) {
+                alert('Backend not running. Please start the Python server.');
+            } finally {
+                spinner.style.display = 'none';
+                processBtn.style.display = 'inline-block';
+            }
+        };
+    </script>
+</body>
+</html>

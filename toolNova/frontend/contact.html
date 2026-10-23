@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | ToolNova</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        .contact-hero {
+            padding: 100px 0 60px; text-align: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white; border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+        .contact-form {
+            max-width: 600px; margin: -50px auto 80px; background: white;
+            padding: 40px; border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg); border: 1px solid var(--border-color);
+        }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main); }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 12px; border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="logo" style="text-decoration: none;">ToolNova</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#toolGrid">Tools</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html" style="color: var(--primary-color);">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="contact-hero">
+        <div class="container">
+            <h1>Get in Touch</h1>
+            <p>Have a suggestion or a problem? We are here to help you.</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="contact-form">
+            <form id="contactForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="john@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea rows="5" placeholder="How can we help you?" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <footer style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+        <p>© 2024 ToolNova. All rights reserved.</p>
+    </footer>
+</body>
+</html>
